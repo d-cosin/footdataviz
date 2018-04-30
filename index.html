@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.axis--x path {
+  display: none;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+</style>
+<svg width="960" height="500"></svg>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+
+<script>
+var svg = d3.select("svg"),
+    margin = {top: 20, right: 80, bottom: 30, left: 50},
+    width = svg.attr("width") - margin.left - margin.right,
+    height = svg.attr("height") - margin.top - margin.bottom,
+    g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var x = d3.scaleLinear().range([0, width]),
+    y = d3.scaleLinear().range([height, 0]),
+    z = d3.scaleOrdinal(d3.schemeCategory10);
+
+var line = d3.line()
+    .curve(d3.curveBasis)
+    .x(function(d) { return x(d.season); })
+    .y(function(d) { return y(d.avgGoals); });
+
+d3.csv("avg_goals.csv", type, function(error, data){
+    if (error) throw error;
+
+    var leagues = data.columns.slice(1).map(function(id){
+        return {
+            id: id,
+            values: data.map(function(d){
+                return {season: d.season, avgGoals: d[id]}
+            })
+        };
+    });
+    console.log(leagues);
+
+    // debugger;
+
+    x.domain(d3.extent(data, function(d) { return d.season; }));
+
+    y.domain([
+        d3.min(leagues, function(l) { return d3.min(l.values, function(d) { return d.avgGoals;}) }),
+        d3.max(leagues, function(l) { return d3.max(l.values, function(d) { return d.avgGoals;}) })
+    ]);
+
+    z.domain(leagues.map(function(l) { return l.id; }));
+
+    g.append("g")
+        .attr("class", "axis axis--x")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x))
+
+    g.append("g")
+        .attr("class", "axis axis--y")
+        .call(d3.axisLeft(y))
+        .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", "0.71em")
+        .attr("fill", "#000")
+        .text("Average Goals");
+    
+    var league = g.selectAll(".league")
+        .data(leagues)
+        .enter().append("g")
+            .attr("class", "league");
+    
+    league.append("path")
+        .attr("class", "line")
+        .attr("d", function(d) { return line(d.values); })
+        .style("stroke", function(d) { return z(d.id); });
+    
+    league.append("text")
+        .datum(function(d) { return {id: d.id, value: d.values[d.values.length - 1]}; })
+        .attr("transform", function(d) { return "translate(" + x(d.value.season) + "," + y(d.value.avgGoals) + ")"; })
+        .attr("x", 3)
+        .attr("dy", "0.35em")
+        .style("font", "10px sans-serif")
+        .text(function(d) { return d.id; });
+
+})
+
+function type(d, _, columns) {
+    d.season = +d.season;
+    for (var i = 1, n = columns.length, c; i < n; ++i) d[c = columns[i]] = +d[c];
+    return d;
+}
+
+</script>
+
