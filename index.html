@@ -8,8 +8,12 @@
 
 .line {
   fill: none;
-  stroke: steelblue;
+  stroke: black;
   stroke-width: 1.5px;
+}
+
+.point {
+  stroke: rgba(224, 194, 139, 0.884);
 }
 
 </style>
@@ -28,7 +32,7 @@ var x = d3.scaleLinear().range([0, width]),
     z = d3.scaleOrdinal(d3.schemeCategory10);
 
 var line = d3.line()
-    .curve(d3.curveBasis)
+
     .x(function(d) { return x(d.season); })
     .y(function(d) { return y(d.avgGoals); });
 
@@ -43,7 +47,6 @@ d3.csv("avg_goals.csv", type, function(error, data){
             })
         };
     });
-    console.log(leagues);
 
     // debugger;
 
@@ -54,7 +57,7 @@ d3.csv("avg_goals.csv", type, function(error, data){
         d3.max(leagues, function(l) { return d3.max(l.values, function(d) { return d.avgGoals;}) })
     ]);
 
-    z.domain(leagues.map(function(l) { return l.id; }));
+    z.domain(leagues.map(function(l, i) { return i; }));
 
     g.append("g")
         .attr("class", "axis axis--x")
@@ -73,13 +76,13 @@ d3.csv("avg_goals.csv", type, function(error, data){
     
     var league = g.selectAll(".league")
         .data(leagues)
-        .enter().append("g")
-            .attr("class", "league");
+      .enter().append("g")
+        .attr("class", "league");
     
     league.append("path")
         .attr("class", "line")
         .attr("d", function(d) { return line(d.values); })
-        .style("stroke", function(d) { return z(d.id); });
+        .style("stroke", function(d, i) { return z(i); });
     
     league.append("text")
         .datum(function(d) { return {id: d.id, value: d.values[d.values.length - 1]}; })
@@ -89,6 +92,24 @@ d3.csv("avg_goals.csv", type, function(error, data){
         .style("font", "10px sans-serif")
         .text(function(d) { return d.id; });
 
+    // debugger;
+    var series = leagues.map(function(l) { return l.values; });
+    // debugger;
+    var serie = g.selectAll(".series")
+        .data(series)
+      .enter().append("g")
+        .attr("class", "series")
+        .style("fill", function(d, i) { return z(i); })
+    
+    // debugger;
+    var point =  serie.selectAll(".point")
+        .data(function(d) { return d; })
+      .enter().append("circle");
+    // debugger;
+        point.attr("class", "point")
+        .attr("r", 3.5)
+        .attr("cx", function (d) { return x(d.season); })
+        .attr("cy", function (d) { return y(d.avgGoals); });
 })
 
 function type(d, _, columns) {
