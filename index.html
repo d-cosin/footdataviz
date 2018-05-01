@@ -32,7 +32,7 @@ var x = d3.scaleLinear().range([0, width]),
     z = d3.scaleOrdinal(d3.schemeCategory10);
 
 var line = d3.line()
-
+    .defined(function(d) { return d.avgGoals; })
     .x(function(d) { return x(d.season); })
     .y(function(d) { return y(d.avgGoals); });
 
@@ -107,9 +107,9 @@ d3.csv("avg_goals.csv", type, function(error, data){
       .enter().append("circle");
     // debugger;
         point.attr("class", "point")
-        .attr("r", 3.5)
-        .attr("cx", function (d) { return x(d.season); })
-        .attr("cy", function (d) { return y(d.avgGoals); });
+        .attr("r", function (d) { return isNaN(d.avgGoals) ? null : 3.5; })
+        .attr("cx", function (d) { return isNaN(d.avgGoals) ? null : x(d.season); })
+        .attr("cy", function (d) { return isNaN(d.avgGoals) ? null : y(d.avgGoals); });
 })
 
 function type(d, _, columns) {
