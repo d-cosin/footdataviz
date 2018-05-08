@@ -90,7 +90,12 @@ d3.csv("avg_goals.csv", type, function(error, data){
         .attr("class", "line")
         .attr("id", function (d) { return ('tag'+d.id.replace(/\s+/g, '')) })
         .attr("d", function(d) { return line(d.values); })
-        .style("stroke", function(d, i) { return z(i); });
+        .style("stroke", function(d, i) {
+            return d.id == "Brasileirao" ? z(i) : "grey"; 
+        })
+        .style("opacity", function(d) {
+            return d.id == "Brasileirao" ? 1 : 0.1 ;
+        });
     
     // league.append("text")
     //     .datum(function(d) { return {id: d.id, value: d.values[d.values.length - 1]}; })
@@ -104,25 +109,40 @@ d3.csv("avg_goals.csv", type, function(error, data){
         .data(leagues)
       .enter().append("text")
         .attr("class", "legend")
+        .attr("id", function(d, i) { return ("legend" + i); })
         .attr("x", function(d, i) { return ((legendSpace/2) + i*legendSpace); })
         .attr("y", height + (margin.bottom/2) + 15)
-        .style("fill", function(d, i) { return z(i); })
-        .text(function(d) { return d.id; })
-        .call(function(d) {  
-            d.active = true;
-            return d.active;
+        .style("fill", function(d, i) { 
+            return d.id == "Brasileirao" ? z(i) : "grey"; 
         })
+        .style("opacity", function(d) {
+            return d.id == "Brasileirao" ? 1 : 0.4 ;
+        })
+        .text(function(d) { return d.id; })
         .on("click", function(d, i) {
             var active = d.active ? false : true,
-            newOpacity = active ? 0 : 1;
+            newOpacity = active ? 1 : 0;
             console.log(active)
             console.log(newOpacity)
             d3.selectAll("#tag"+d.id.replace(/\s+/g, ''))
               .transition().duration(100)
-              .style("opacity", newOpacity);
+              .style("opacity", function() {
+                  return active ? 1 : 0.1;
+              })
+              .style("stroke", function() {
+                return active ? z(i) : "grey"; 
+              });
             d3.selectAll("#serie"+i)
               .transition().duration(100)
               .style("opacity", newOpacity);
+            d3.selectAll("#legend"+i)
+              .transition().duration(100)
+              .style("opacity", function() {
+                  return active ? 1 : 0.4;
+              })
+              .style("fill", function() {
+                return active ? z(i) : "grey"; 
+              });
             d.active = active
         })
     
@@ -135,7 +155,10 @@ d3.csv("avg_goals.csv", type, function(error, data){
       .enter().append("g")
         .attr("class", "series")
         .attr("id", function(d, i) { return ("serie" + i)})
-        .style("fill", function(d, i) { return z(i); });
+        .style("fill", function(d, i) { return z(i); })
+        .style("opacity", function(d, i) {
+            return i == 6 ? 1 : 0;  // alterar aqui se quando passar o id da liga pelo series
+        });
     
     // debugger;
     var point =  serie.selectAll(".point")
