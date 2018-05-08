@@ -119,11 +119,12 @@ d3.csv("avg_goals.csv", type, function(error, data){
             return d.id == "Brasileirao" ? 1 : 0.4 ;
         })
         .text(function(d) { return d.id; })
+        .each(function(d, i) { 
+            d.active = d.id == "Brasileirao" ? true : false;
+        })
         .on("click", function(d, i) {
             var active = d.active ? false : true,
             newOpacity = active ? 1 : 0;
-            console.log(active)
-            console.log(newOpacity)
             d3.selectAll("#tag"+d.id.replace(/\s+/g, ''))
               .transition().duration(100)
               .style("opacity", function() {
