@@ -12,6 +12,19 @@
   stroke-width: 1.5px;
 }
 
+div.tooltip {
+  position: absolute;
+  text-align: center;
+  width: 60px;
+  height: 28px;
+  padding: 2px;
+  font: 12px sans-serif;
+  background: lightsteelblue;
+  border: 0px;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
 .point {
   stroke: rgba(224, 194, 139, 0.884);
 }
@@ -40,6 +53,10 @@ var line = d3.line()
     .defined(function(d) { return d.avgGoals; })
     .x(function(d) { return x(d.season); })
     .y(function(d) { return y(d.avgGoals); });
+
+var div = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
 
 d3.csv("avg_goals.csv", type, function(error, data){
     if (error) throw error;
@@ -169,7 +186,20 @@ d3.csv("avg_goals.csv", type, function(error, data){
         point.attr("class", "point")
         .attr("r", function (d) { return isNaN(d.avgGoals) ? null : 3.5; })
         .attr("cx", function (d) { return isNaN(d.avgGoals) ? null : x(d.season); })
-        .attr("cy", function (d) { return isNaN(d.avgGoals) ? null : y(d.avgGoals); });
+        .attr("cy", function (d) { return isNaN(d.avgGoals) ? null : y(d.avgGoals); })
+        .on("mouseover", function(d) {
+            div.transition()
+                .duration(200)
+                .style("opacity", .9);
+            div.html(d.avgGoals + "<br/>" + d.season)
+                .style("left", (d3.event.pageX) + "px")
+                .style("top", (d3.event.pageY - 28) + "px");
+        })
+        .on("mouseout", function(d){
+            div.transition()
+                .duration(500)
+                .style("opacity", 0);
+        });
 })
 
 function type(d, _, columns) {
