@@ -1,9 +1,18 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<style>
 
-.axis--x path {
-  display: none;
+<style>
+p {
+  font: 15px sans-serif;
+  margin: 0px 55px;
+}
+
+.title {
+  font: 16px sans-serif;
+}
+
+.axis {
+  font-size: 12px;
 }
 
 .line {
@@ -30,13 +39,15 @@ div.tooltip {
 }
 
 .legend {
+    font: 15px sans-serif;
     font-weight: bold;
     text-anchor: middle;
 }
-
 </style>
+
 <svg width="960" height="500"></svg>
 <script src="https://d3js.org/d3.v4.min.js"></script>
+<p>Click on the legend labels to toggle the line of the respective leagues.</p>
 
 <script>
 var svg = d3.select("svg"),
@@ -70,8 +81,6 @@ d3.csv("avg_goals.csv", type, function(error, data){
         };
     });
 
-    // debugger;
-
     x.domain(d3.extent(data, function(d) { return d.season; }));
 
     y.domain([
@@ -83,10 +92,17 @@ d3.csv("avg_goals.csv", type, function(error, data){
 
     legendSpace = width/(data.columns.length - 1);
 
+    g.append("text")
+        .attr("class", "title")
+        .attr("x", (width/2))
+        .attr("y", 0)
+        .attr("text-anchor", "middle")
+        .text("Is Brazil national league facing a crisis of goals?")
+
     g.append("g")
         .attr("class", "axis axis--x")
         .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x))
+        .call(d3.axisBottom(x).tickFormat(d3.format("d")))
 
     g.append("g")
         .attr("class", "axis axis--y")
@@ -96,8 +112,9 @@ d3.csv("avg_goals.csv", type, function(error, data){
         .attr("y", 6)
         .attr("dy", "0.71em")
         .attr("fill", "#000")
-        .text("Average Goals");
+        .text("Goals per Team");
     
+    // draw lines 
     var league = g.selectAll(".league")
         .data(leagues)
       .enter().append("g")
@@ -107,21 +124,15 @@ d3.csv("avg_goals.csv", type, function(error, data){
         .attr("class", "line")
         .attr("id", function (d) { return ('tag'+d.id.replace(/\s+/g, '')) })
         .attr("d", function(d) { return line(d.values); })
+        // initial focus on Brazil national league
         .style("stroke", function(d, i) {
             return d.id == "Brasileirao" ? z(i) : "grey"; 
         })
         .style("opacity", function(d) {
             return d.id == "Brasileirao" ? 1 : 0.1 ;
         });
-    
-    // league.append("text")
-    //     .datum(function(d) { return {id: d.id, value: d.values[d.values.length - 1]}; })
-    //     .attr("transform", function(d) { return "translate(" + x(d.value.season) + "," + y(d.value.avgGoals) + ")"; })
-    //     .attr("x", 3)
-    //     .attr("dy", "0.35em")
-    //     .style("font", "10px sans-serif")
-    //     .text(function(d) { return d.id; });
-    
+        
+    // draw legends
     var legend = g.selectAll(".legend")
         .data(leagues)
       .enter().append("text")
@@ -129,6 +140,7 @@ d3.csv("avg_goals.csv", type, function(error, data){
         .attr("id", function(d, i) { return ("legend" + i); })
         .attr("x", function(d, i) { return ((legendSpace/2) + i*legendSpace); })
         .attr("y", height + (margin.bottom/2) + 15)
+        // initial focus on Brazil national league
         .style("fill", function(d, i) { 
             return d.id == "Brasileirao" ? z(i) : "grey"; 
         })
@@ -139,6 +151,7 @@ d3.csv("avg_goals.csv", type, function(error, data){
         .each(function(d, i) { 
             d.active = d.id == "Brasileirao" ? true : false;
         })
+        // on click toggle lines and legend labels
         .on("click", function(d, i) {
             var active = d.active ? false : true,
             newOpacity = active ? 1 : 0;
@@ -165,9 +178,9 @@ d3.csv("avg_goals.csv", type, function(error, data){
         })
     
 
-    // debugger;
+    // draw scatter plot
     var series = leagues.map(function(l) { return l.values; });
-    // debugger;
+    
     var serie = g.selectAll(".series")
         .data(series)
       .enter().append("g")
@@ -175,18 +188,17 @@ d3.csv("avg_goals.csv", type, function(error, data){
         .attr("id", function(d, i) { return ("serie" + i)})
         .style("fill", function(d, i) { return z(i); })
         .style("opacity", function(d, i) {
-            return i == 6 ? 1 : 0;  // alterar aqui se quando passar o id da liga pelo series
+            return i == 6 ? 1 : 0;
         });
     
-    // debugger;
     var point =  serie.selectAll(".point")
         .data(function(d) { return d; })
       .enter().append("circle");
-    // debugger;
         point.attr("class", "point")
         .attr("r", function (d) { return isNaN(d.avgGoals) ? null : 3.5; })
         .attr("cx", function (d) { return isNaN(d.avgGoals) ? null : x(d.season); })
         .attr("cy", function (d) { return isNaN(d.avgGoals) ? null : y(d.avgGoals); })
+        // tooltip interaction
         .on("mouseover", function(d) {
             div.transition()
                 .duration(200)
@@ -202,6 +214,7 @@ d3.csv("avg_goals.csv", type, function(error, data){
         });
 })
 
+// data coersion to integer
 function type(d, _, columns) {
     d.season = +d.season;
     for (var i = 1, n = columns.length, c; i < n; ++i) d[c = columns[i]] = +d[c];
