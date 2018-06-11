@@ -2,6 +2,10 @@
 
 In the past years, Brazilian football national league seems to face a decrease in the quality of the games. Trying to address this assumption, the presented visualization shows the average number of goals scored by the teams each year since 2003 in the main football leagues. Through a multiline chart, it is suggested that, in fact, Brazilian national league has been suffering a decrease in the number of scored goals, while other leagues have maintained or increased their scoring levels. Considering that the number of goals in a football match impacts the general quality, this visualization supports the hypothesis that Brazilian national football suffers a quality crisis. However, it is worth pointing out that the visualization is not trying to suggest that goals scored that affect the quality of football games, meaning that other metrics should be analyzed and visualized as well.
 
+It is possible to check the visualization on the following link:
+
+https://bl.ocks.org/d-cosin/5eb717dd7e2ace784cca41ab4f29a33f
+
 # Design
 
 ## Chart Type
