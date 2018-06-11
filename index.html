@@ -18,7 +18,7 @@
 .line {
   fill: none;
   stroke: black;
-  stroke-width: 1.5px;
+  stroke-width: 2.5px;
 }
 
 div.tooltip {
@@ -111,7 +111,7 @@ d3.csv("data/avg_goals.csv", type, function(error, data){
         .attr("y", 6)
         .attr("dy", "0.71em")
         .attr("fill", "#000")
-        .text("Goals per Team");
+        .text("Average Goals Scored per Team in the League");
     
     // draw lines 
     var league = g.selectAll(".league")
@@ -163,7 +163,7 @@ d3.csv("data/avg_goals.csv", type, function(error, data){
         .attr("id", function(d, i) { return ("legend" + i); })
         .attr("x", function(d, i) { return ((legendSpace/2) + i*legendSpace); })
         .attr("y", height + (margin.bottom/2) + 15)
-        // initial focus on Brazil national league
+        // initial focus on national league of Brazil
         .style("fill", function(d, i) { 
             return d.id == "Brasileirao" ? z(i) : "grey"; 
         })
@@ -201,7 +201,7 @@ d3.csv("data/avg_goals.csv", type, function(error, data){
         });
     
     g.append("text")
-      .text("*Click on the legend labels to toggle the line of the respective leagues.")
+      .text("*Click on the legend labels to toggle the line of the respective leagues or click on the lines itself.")
       .attr("class", "info")
       .attr("y", height + (margin.bottom/2) + 50);
 

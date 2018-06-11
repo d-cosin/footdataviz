@@ -1,6 +1,6 @@
 # Summary
 
-In the past years, Brazilian football national league seems to face a decrease in the quality of the games. Trying to address this assumption, the presented visualization shows the average number of goals scored by the teams each year since 2003 in the main football leagues. Through a multiline chart, it is possible to verify that, in fact, Brazilian national league has been suffering a decrease in the number of scored goals, while other leagues have maintained or increased their scoring levels. Considering that the number of goals in a football match impacts the general quality, this visualization supports the hypothesis that Brazilian national football suffers a quality crisis.
+In the past years, Brazilian football national league seems to face a decrease in the quality of the games. Trying to address this assumption, the presented visualization shows the average number of goals scored by the teams each year since 2003 in the main football leagues. Through a multiline chart, it is suggested that, in fact, Brazilian national league has been suffering a decrease in the number of scored goals, while other leagues have maintained or increased their scoring levels. Considering that the number of goals in a football match impacts the general quality, this visualization supports the hypothesis that Brazilian national football suffers a quality crisis. However, it is worth pointing out that the visualization is not trying to suggest that goals scored that affect the quality of football games, meaning that other metrics should be analyzed and visualized as well.
 
 # Design
 
@@ -22,7 +22,17 @@ As mentioned briefly in the Color Encoding section, users are allowed to interac
 
 # Feedbacks
 
-Please let me know whether any question or suggestion about the visualization and/or code.
+## Feedback 1
+
+Users should be able to toggle the lines by clicking on the lines, in addition to clicking on the respective legend label.
+
+## Feedback 2
+
+The *x axis* label should be changed so users have a better understanding of the metric being visualized. The chosen label *"Goals per Team"* is somewhat unclear about the metric represented meaning.
+
+## Feedback 3
+
+The *"Summary"* section should be rephrased because it sounds like that the average goals scored is the only variable that impacts the quality of the performance of Brazilian football players.
 
 # Resources
 
